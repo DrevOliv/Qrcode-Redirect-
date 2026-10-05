@@ -1,0 +1,24 @@
+services:
+  qrcode-redirect:
+    build: .
+    image: qrcode-redirect:latest
+    container_name: qrcode-redirect
+    restart: unless-stopped
+    environment:
+      # The public URL your Cloudflare tunnel serves. QR codes encode BASE_URL/r/<id>,
+      # so set this BEFORE printing anything and never change it afterwards.
+      BASE_URL: ${BASE_URL:-https://qr.example.com}
+      # Password for the admin panel at /admin
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+    volumes:
+      - qrcode-data:/data
+    ports:
+      - "3000:3000"
+    # Add your Dockflare labels / network here, e.g.:
+    # labels:
+    #   dockflare.enable: "true"
+    #   dockflare.hostname: "qr.example.com"
+    #   dockflare.service: "http://qrcode-redirect:3000"
+
+volumes:
+  qrcode-data:
