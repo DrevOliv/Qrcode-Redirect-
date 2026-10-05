@@ -5,7 +5,13 @@ import path from 'node:path';
 const DATA_DIR = process.env.DATA_DIR || path.resolve('data');
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const db = new DatabaseSync(path.join(DATA_DIR, 'qrcodes.db'));
+let db;
+try {
+  db = new DatabaseSync(path.join(DATA_DIR, 'qrcodes.db'));
+} catch (err) {
+  console.error(`Cannot open database in ${DATA_DIR} — is the directory writable by this user (uid ${process.getuid?.()})?`);
+  throw err;
+}
 
 db.exec(`
   PRAGMA journal_mode = WAL;
